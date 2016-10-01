@@ -1,11 +1,11 @@
 openraildata-trust
 ===========
 
-[![Travis](https://img.shields.io/travis/rust-lang/rust.svg?style=flat-square)](https://travis-ci.org/divergentlepton/openraildata-trust)
-[![npm](https://img.shields.io/npm/dt/express.svg?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
-[![npm](https://img.shields.io/npm/v/npm.svg?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
-[![npm](https://img.shields.io/npm/l/express.svg?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
-[![sheilds](https://img.shields.io/badge/style-flat--squared-green.svg?style=flat-square)](https://img.shields.io/badge/status-WIP-yellow.svg)
+[![Travis](https://img.shields.io/travis/divergentlepton/openraildata-trust.svg?style=flat-square)](https://travis-ci.org/divergentlepton/openraildata-trust)
+[![Version](https://img.shields.io/npm/v/openraildata-trust.svg?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
+[![Monthly Downloads](https://img.shields.io/npm/dm/openraildata-trust.svg?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/divergentlepton/openraildata-trust/master/LICENSE)
+[![sheilds](https://img.shields.io/badge/status-WIP-yellow.svg?style=flat-square)](https://img.shields.io/badge/status-WIP-yellow.svg)
 
 
 A Node.JS package which connects to Network Rail's TRUST system to provide information on the UK rail network.
