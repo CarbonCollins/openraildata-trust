@@ -1,8 +1,21 @@
-# openraildata-trust
+openraildata-trust
+===========
+
+[![Travis](https://img.shields.io/travis/rust-lang/rust.svg?maxAge=2592000?style=flat-square)](https://travis-ci.org/divergentlepton/openraildata-trust)
+[![npm](https://img.shields.io/npm/dt/express.svg?maxAge=2592000?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
+[![npm](https://img.shields.io/npm/v/npm.svg?maxAge=2592000?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
+[![npm](https://img.shields.io/npm/l/express.svg?maxAge=2592000?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
+[![sheilds](https://img.shields.io/badge/style-flat--squared-green.svg?style=flat-square)](https://img.shields.io/badge/status-WIP-yellow.svg)
+
+
 A Node.JS package which connects to Network Rail's TRUST system to provide information on the UK rail network.
 
 
 *WIP*
+
+## Installation
+
+	npm install openraildata-trust
 
 # API
 
@@ -41,6 +54,6 @@ Disconnectes from the TRUST server. Before disconnecting all subscriptions will 
 - `topic`: The topic name to unsubscribe from (Should not contain '/topic/' as this is prepended within the function).
 - `callback`: This is run once the topic has been unsubscribed.
 
-## trust unsubscribeAll(callback)
+## trust.unsubscribeAll(callback)
 
 Unsubscribes from all subscribed topics and runs a callback function once completed.
