@@ -8,7 +8,6 @@
  * -Would like to add optional reconnect (with increasing delay counts)
  * -Unsubscribe function to remove elements from subscriptions array (for use with above)
  * -capture exceptions from stomp-client package to stop interruption of execution
- * -subscribe callback to return single train events (unbundle from server)
  */
 
 'use strict';
