@@ -16,22 +16,17 @@
   },
   "author": {
     "name": "Steven Collins",
-    "email": "divergentlepton@outlook.com"
-  },
-  "devDependencies": {
-    "dotenv": "^2.0.0",
-    "chai": "^3.5.0",
-    "mocha": "^3.0.2"
+    "git": "https://github.com/divergentlepton"
   },
   "dependencies": {
     "stomp-client": "^0.8.1"
   },
   "repository": {
-   "type": "git",
-   "url": "https://github.com/DivergentLepton/openraildata-trust" 
+    "type": "git",
+    "url": "https://github.com/divergentlepton/openraildata-trust"
   },
   "bugs": {
-    "url": "https://github.com/DivergentLepton/openraildata-trust/issues"
+    "url": "https://github.com/divergentlepton/openraildata-trust/issues"
   },
   "engines": {
     "node": ">= 0.10"

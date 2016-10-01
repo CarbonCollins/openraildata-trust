@@ -2,7 +2,7 @@
  * openraildata-trust - Connects to Network Rails TRUST system to provide real-time
  * information such as train movement data within the UK.
  *
- * Author: Steven Collins (divergentlepton@outlook.com)
+ * Author: Steven Collins (https://github.com/divergentlepton)
  *
  * Future Updates:
  * -Would like to add optional reconnect (with increasing delay counts)
@@ -14,6 +14,7 @@
 'use strict';
 
 const StompClient = require('stomp-client').StompClient;
+
 
 class trustClient {
   constructor(username, password) {
