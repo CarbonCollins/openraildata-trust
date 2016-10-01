@@ -1,0 +1,39 @@
+{
+  "name": "openraildata-trust",
+  "version": "0.1.0",
+  "description": "A node package for accessing Network Rail TRUST data",
+  "license": "MIT",
+  "keywords": [
+    "openraildata",
+    "open",
+    "rail",
+    "National",
+    "trust"
+  ],
+  "main": "trust.js",
+  "scripts": {
+    "test": "mocha test/test.js"
+  },
+  "author": {
+    "name": "Steven Collins",
+    "email": "divergentlepton@outlook.com"
+  },
+  "devDependencies": {
+    "dotenv": "^2.0.0",
+    "chai": "^3.5.0",
+    "mocha": "^3.0.2"
+  },
+  "dependencies": {
+    "stomp-client": "^0.8.1"
+  },
+  "repository": {
+   "type": "git",
+   "url": "https://github.com/DivergentLepton/openraildata-trust" 
+  },
+  "bugs": {
+    "url": "https://github.com/DivergentLepton/openraildata-trust/issues"
+  },
+  "engines": {
+    "node": "^6.6.0"
+  }
+}
