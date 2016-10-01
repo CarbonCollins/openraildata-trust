@@ -16,8 +16,8 @@ const StompClient = require('stomp-client').StompClient;
 
 
 class trustClient {
-  constructor(username, password) {
-    this.client = new StompClient('datafeeds.networkrail.co.uk', 61618, username, password);
+  constructor(username, password, maxreconnect) {
+    this.client = new StompClient('datafeeds.networkrail.co.uk', 61618, username, password, '1.0', null, { retries: (maxreconnect || -1), delay: 1000 });
     this.sessionID = '';
     this.subscriptions = [];
 
@@ -39,6 +39,8 @@ class trustClient {
       this.sessionID = sessionId;
       console.log('Connected to TRUST');
       callback(null);
+    }, (err) => {
+      callback(err);
     });
   }
 
@@ -50,11 +52,13 @@ class trustClient {
    * @callback(err) - callback returns one parameter, intended for
    * error returns (Not implemented yet)
    */
-  disconnect(timeout, callback) {
+  disconnect(timeout, callback) { //need to name timeout optional...
     setTimeout(() => {
       this.unsubscribeAll(() => {
         this.client.disconnect(() => {
           console.log('Disconnected from TRUST');
+          this.sessionID = '';
+          this.subscriptions = [];
         });
         callback(null);
       });
@@ -69,7 +73,7 @@ class trustClient {
    * and then reconnect (Not implemented yet)
    * @callback(err, message) - Callback returns two parameters, an error and a message body.
    */
-  subscribe(topic, persistant, callback) {
+  subscribe(topic, persistant, callback) { // callback cannot auto unbundle message...
     if (this.sessionID !== '') {
       const topicurl = `/topic/${topic}`;
       this.subscriptions.push({
