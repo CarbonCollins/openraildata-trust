@@ -7,7 +7,7 @@
  * Future Updates:
  * -Would like to add optional reconnect (with increasing delay counts)
  * -Unsubscribe function to remove elements from subscriptions array (for use with above)
- * -capture exceptions from stomp-client package to stop interruption of execution.
+ * -capture exceptions from stomp-client package to stop interruption of execution
  * -subscribe callback to return single train events (unbundle from server)
  */
 
@@ -80,7 +80,10 @@ class trustClient {
       console.log(`Subscribing to ${topicurl}`);
       this.client.subscribe(topicurl, (body, headers) => {
         console.log('Message received');
-        callback(null, body);
+        const msgBundle = JSON.parse(body);
+        for (let i = 0; i < msgBundle.length; i += 1) {
+          callback(null, msgBundle[i]);
+        }
       });
     } else {
       callback('Unable to subscribe. Not connected to the TRUST server.');
