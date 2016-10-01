@@ -1,11 +1,11 @@
 openraildata-trust
 ===========
 
-[![Travis](https://img.shields.io/travis/rust-lang/rust.svg?maxAge=2592000?style=flat-square)](https://travis-ci.org/divergentlepton/openraildata-trust)
-[![npm](https://img.shields.io/npm/dt/express.svg?maxAge=2592000?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
-[![npm](https://img.shields.io/npm/v/npm.svg?maxAge=2592000?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
-[![npm](https://img.shields.io/npm/l/express.svg?maxAge=2592000?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
-[![sheilds](https://img.shields.io/badge/style-flat--squared-green.svg?style=flat-square)](https://img.shields.io/badge/status-WIP-yellow.svg)
+[![Travis](https://travis-ci.org/divergentlepton/openraildata-trust?maxAge=2592000?style=flat-square)](https://travis-ci.org/divergentlepton/openraildata-trust)
+[![npm](https://www.npmjs.com/package/openraildata-trust?maxAge=2592000?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
+[![npm](https://www.npmjs.com/package/openraildata-trust?maxAge=2592000?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
+[![npm](https://www.npmjs.com/package/openraildata-trust?maxAge=2592000?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
+[![sheilds](https://img.shields.io/badge/status-WIP-yellow.svg?style=flat-square)](https://img.shields.io/badge/status-WIP-yellow.svg)
 
 
 A Node.JS package which connects to Network Rail's TRUST system to provide information on the UK rail network.
