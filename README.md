@@ -3,7 +3,6 @@ openraildata-trust
 
 [![Travis](https://img.shields.io/travis/divergentlepton/openraildata-trust.svg?style=flat-square)](https://travis-ci.org/divergentlepton/openraildata-trust)
 [![Version](https://img.shields.io/npm/v/openraildata-trust.svg?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
-[![Monthly Downloads](https://img.shields.io/npm/dm/openraildata-trust.svg?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/divergentlepton/openraildata-trust/master/LICENSE)
 [![sheilds](https://img.shields.io/badge/status-WIP-yellow.svg?style=flat-square)](https://img.shields.io/badge/status-WIP-yellow.svg)
 
@@ -42,11 +41,10 @@ Will attempt to connect to Network Rails TRUST STOMP server. Any errors which oc
 
 Disconnectes from the TRUST server. Before disconnecting all subscriptions will be unsubscribed.
 
-## trust.subscribe(topic, [persistant], [unbundle], callback)
+## trust.subscribe(topic, [persistant], callback)
 
 - `topic`: The topic name to subscribe to (Should not contain '/topic/' as this is prepended within the function). These can be found at: http://nrodwiki.rockshore.net/index.php/About_the_Network_Rail_feeds under the available feeds sections. This does also require an active account on datafeeds.nationalrail.co.uk and datafeeds.networkrail.co.uk.
 - `persistant`: Should the client reconnect to this subscription on a successfull reconnect. (default is true)
-- `unbundle`: A boolean value to unbundle messages into individual entries (This may be removed in future releases)
 - `callback`: A callback function that is called as a new message arrives or on an error. The first parameter will hold an error or null and the second parameter will contain a JSON object with the message.
 
 ## trust.unsubscribe(topic, callback)

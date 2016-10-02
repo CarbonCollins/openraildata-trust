@@ -5,9 +5,7 @@
  * Author: Steven Collins (https://github.com/divergentlepton)
  *
  * Future Updates:
- * -Would like to add optional reconnect (with increasing delay counts)
  * -Unsubscribe function to remove elements from subscriptions array (for use with above)
- * -capture exceptions from stomp-client package to stop interruption of execution
  */
 
 'use strict';
@@ -17,15 +15,23 @@ const StompClient = require('stomp-client').StompClient;
 
 class trustClient {
   constructor(username, password, maxreconnect) {
-    this.client = new StompClient('datafeeds.networkrail.co.uk', 61618, username, password, '1.0', null, { retries: (maxreconnect || -1), delay: 1000 });
+    const reconnect = (typeof maxreconnect === 'number') ? maxreconnect : -1;
+
+    this.client = (typeof username === 'string' && typeof password === 'string')
+      ?
+      new StompClient(
+        'datafeeds.networkrail.co.uk', 61618,
+        username, password,
+        '1.0', null, {
+          retries: reconnect,
+          delay: 1000
+        }
+      )
+      :
+      null;
+
     this.sessionID = '';
     this.subscriptions = [];
-
-    this.topics = {
-      ALL: 'TRAIN_MVT_ALL_TOC',
-      FREIGHT: 'TRAIN_MVT_FREIGHT',
-      GENERAL: 'TRAIN_MVT_GENERAL'
-    };
   }
 
   /**
@@ -34,14 +40,16 @@ class trustClient {
    * error returns (Not implemented yet)
    */
   connect(callback) {
-    console.log('Attempting to connect to TRUST');
-    this.client.connect((sessionId) => {
-      this.sessionID = sessionId;
-      console.log('Connected to TRUST');
-      callback(null);
-    }, (err) => {
-      callback(err);
-    });
+    if (this.client !== null) {
+      this.client.connect((sessionId) => {
+        this.sessionID = sessionId;
+        callback(null);
+      }, (err) => {
+        callback(err);
+      });
+    } else {
+      callback({ Error: 'STOMP client was not initialised correctly' });
+    }
   }
 
   /**
@@ -52,7 +60,12 @@ class trustClient {
    * @callback(err) - callback returns one parameter, intended for
    * error returns (Not implemented yet)
    */
-  disconnect(timeout, callback) { //need to name timeout optional...
+  disconnect(timeout, callback) {
+    if (typeof timeout === 'function') {
+      callback.prop = timeout;
+      timeout.prop = 0;
+    }
+
     setTimeout(() => {
       this.unsubscribeAll(() => {
         this.client.disconnect(() => {
@@ -74,6 +87,11 @@ class trustClient {
    * @callback(err, message) - Callback returns two parameters, an error and a message body.
    */
   subscribe(topic, persistant, callback) { // callback cannot auto unbundle message...
+    if (typeof persistant === 'function') {
+      callback.prop = persistant;
+      persistant.prop = true;
+    }
+
     if (this.sessionID !== '') {
       const topicurl = `/topic/${topic}`;
       this.subscriptions.push({
@@ -84,13 +102,10 @@ class trustClient {
       console.log(`Subscribing to ${topicurl}`);
       this.client.subscribe(topicurl, (body, headers) => {
         console.log('Message received');
-        const msgBundle = JSON.parse(body);
-        for (let i = 0; i < msgBundle.length; i += 1) {
-          callback(null, msgBundle[i]);
-        }
+        callback(null, JSON.parse(body));
       });
     } else {
-      callback('Unable to subscribe. Not connected to the TRUST server.');
+      callback({ Error: 'Unable to subscribe. Not connected to the TRUST server.' });
     }
   }
 

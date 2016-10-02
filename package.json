@@ -12,7 +12,7 @@
   ],
   "main": "trust.js",
   "scripts": {
-    "test": "mocha test/test.js"
+    "test": "./node_modules/.bin/mocha --reporter spec"
   },
   "author": {
     "name": "Steven Collins",
@@ -30,5 +30,9 @@
   },
   "engines": {
     "node": ">= 0.10"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.1.0"
   }
 }
