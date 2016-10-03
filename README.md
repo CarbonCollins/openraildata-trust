@@ -34,7 +34,7 @@ Reconnection timings are calculated using exponential backoff. The first reconne
 
 Will attempt to connect to Network Rails TRUST STOMP server. Any errors which occur during connection will be returned through the callback in the first parameter. If no error occurs then the first parameter will be null
 
-## trust.disconnect([timeout], callback)
+## trust.disconnect([timeout], [callback])
 
 - `timeout`: Wait value (in ms) before disconnecting. (default is 0ms).
 - `callback`: A callback function that is called after disconnecting.

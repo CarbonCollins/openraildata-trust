@@ -12,7 +12,6 @@
 
 const StompClient = require('stomp-client').StompClient;
 
-
 class trustClient {
   constructor(username, password, maxreconnect) {
     const reconnect = (typeof maxreconnect === 'number') ? maxreconnect : -1;
@@ -43,6 +42,8 @@ class trustClient {
     if (this.client !== null) {
       this.client.connect((sessionId) => {
         this.sessionID = sessionId;
+        // this.event.on('trust');
+        // (resubscribe here)
         callback(null);
       }, (err) => {
         callback(err);
@@ -69,11 +70,13 @@ class trustClient {
     setTimeout(() => {
       this.unsubscribeAll(() => {
         this.client.disconnect(() => {
-          console.log('Disconnected from TRUST');
           this.sessionID = '';
           this.subscriptions = [];
+          // this.event.removeAllListeners('trust');
         });
-        callback(null);
+        if (typeof callback === 'function') {
+          callback();
+        }
       });
     }, timeout);
   }
@@ -99,9 +102,7 @@ class trustClient {
         handler: callback,
         persist: persistant
       });
-      console.log(`Subscribing to ${topicurl}`);
       this.client.subscribe(topicurl, (body, headers) => {
-        console.log('Message received');
         callback(null, JSON.parse(body));
       });
     } else {
@@ -117,7 +118,6 @@ class trustClient {
    */
   unsubscribe(topic, callback) {
     this.client.unsubscribe(topic);
-    console.log(`Unsubscribed from ${topic} TRUST subscription`);
     /* remove value from subscriptions array */
     callback(null);
   }
@@ -132,7 +132,6 @@ class trustClient {
       this.client.unsubscribe(topic.topic);
     });
     this.subscriptions = [];
-    console.log('Unsubscribed from all TRUST subscriptions');
     callback(null);
   }
 }
