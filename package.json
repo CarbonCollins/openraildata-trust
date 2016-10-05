@@ -1,6 +1,6 @@
 {
   "name": "openraildata-trust",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "A node package for accessing Network Rail TRUST data",
   "license": "MIT",
   "keywords": [
@@ -19,7 +19,8 @@
     "git": "https://github.com/divergentlepton"
   },
   "dependencies": {
-    "stomp-client": "^0.8.1"
+    "stomp-client": "^0.8.1",
+    "stompit": "^0.23.0"
   },
   "repository": {
     "type": "git",

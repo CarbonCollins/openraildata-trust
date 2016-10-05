@@ -1,3 +1,4 @@
+'use strict';
 const Trust = require('./trust');
 require('dotenv').config();
 
