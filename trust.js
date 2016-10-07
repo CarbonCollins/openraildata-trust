@@ -10,20 +10,22 @@
 
 'use strict';
 
-const StompClient = require('stomp-client').StompClient;
+const stompit = require('stompit');
+
 
 class trustClient {
-  constructor(username, password, maxreconnect) {
-    const reconnect = (typeof maxreconnect === 'number') ? maxreconnect : -1;
-
-    this.client = (typeof username === 'string' && typeof password === 'string') ?
-      new StompClient('datafeeds.networkrail.co.uk', 61618,
-        username, password, '1.0', null, {
-          retries: reconnect,
-          delay: 1000
-        }) : null;
-
-    this.sessionID = '';
+  constructor(username, password) {
+    this.credentials = {
+      host: 'datafeeds.networkrail.co.uk',
+      port: 61618,
+      connectHeaders: {
+        host: '/',
+        login: username,
+        passcode: password,
+        'heart-beat': '5000,5000'
+      }
+    };
+    this.client = null;
     this.subscriptions = [];
   }
 
@@ -33,20 +35,17 @@ class trustClient {
    * error returns (Not implemented yet)
    */
   connect(callback) {
-    if (this.client !== null) {
-      this.client.connect((sessionId) => {
-        this.sessionID = sessionId;
-        for (let i = 0; this.subscriptions.length > i; i += 1) {
-          this.subscribe(this.subscriptions.topic, false, (err) => {
-            if (err) { console.log(err); }
-          });
+    if (this.client === null) {
+      stompit.connect(this.credentials, (err, client) => {
+        if (err) {
+          callback(err);
+          return;
         }
-        callback(null);
-      }, (err) => {
-        callback(err);
+        this.client = client;
+        // reconnect to subscriptions here?
       });
     } else {
-      callback({ Error: 'STOMP client was not initialised correctly' });
+      callback({ Error: 'STOMP client was already initialised' });
     }
   }
 
@@ -66,8 +65,7 @@ class trustClient {
 
     setTimeout(() => {
       this.unsubscribeAll(() => {
-        this.client.disconnect(() => {
-          this.sessionID = '';
+        this.client.disconnect((err) => {
           this.subscriptions = [];
         });
         if (typeof callback === 'function') {
@@ -144,3 +142,10 @@ class trustClient {
 }
 
 module.exports = trustClient;
+
+// Subscription reconnect:
+        /*for (let i = 0; this.subscriptions.length > i; i += 1) {
+          this.subscribe(this.subscriptions.topic, false, (err) => {
+            if (err) { console.log(err); }
+          });
+        }*/
