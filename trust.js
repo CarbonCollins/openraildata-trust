@@ -153,7 +153,10 @@ class trustClient {
   unsubscribeAll(callback) {
     console.log('unsubscribeAll called');
     this.subscriptions.forEach((topic) => {
-      this.client.unsubscribe(topic.topic);
+      console.log(`attempting to unsubscribe from: ${topic}`);
+      console.log(topic);
+      console.log(this.client);
+      this.client.unsubscribe(`/topic/${topic.topic}`);
     });
     this.subscriptions = [];
     callback(null);
