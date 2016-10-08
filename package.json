@@ -1,6 +1,6 @@
 {
   "name": "openraildata-trust",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "A node package for accessing Network Rail TRUST data",
   "license": "MIT",
   "keywords": [

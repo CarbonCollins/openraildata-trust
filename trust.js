@@ -35,16 +35,21 @@ class trustClient {
    * error returns (Not implemented yet)
    */
   connect(callback) {
+    console.log('connect called');
     if (this.client === null) {
+      console.log('attempting to connect');
       stompit.connect(this.credentials, (err, client) => {
         if (err) {
+          console.log('failed to connect');
           callback(err);
           return;
         }
+        console.log('connected');
         this.client = client;
         // reconnect to subscriptions here?
       });
     } else {
+      console.log('Client already initialised');
       callback({ Error: 'STOMP client was already initialised' });
     }
   }
@@ -58,14 +63,19 @@ class trustClient {
    * error returns (Not implemented yet)
    */
   disconnect(timeout, callback) {
+    console.log('disconnect called');
     if (typeof timeout === 'function') {
       callback.prop = timeout;
       timeout.prop = 0;
     }
 
     setTimeout(() => {
+      console.log('disconnect timeout complete');
       this.unsubscribeAll(() => {
+        console.log('unsubscribe from all has run');
         this.client.disconnect((err) => {
+          if (err) { console.log('error disconnecting'); }
+          console.log('disconnected');
           this.subscriptions = [];
         });
         if (typeof callback === 'function') {
@@ -84,13 +94,14 @@ class trustClient {
    * @callback(err, message) - Callback returns two parameters, an error and a message body.
    */
   subscribe(topicName, persistant, callback) { // callback cannot auto unbundle message...
+    console.log('subscribe called');
     if (typeof persistant === 'function') {
       callback.prop = persistant;
       persistant.prop = true;
     }
-    console.log(this.sessionID);
     if (this.sessionID !== '') {
       const topicurl = `/topic/${topicName}`;
+      console.log(`attempting to subscribe to ${topicurl}`);
       if (persistant === true) {
         const pushID = this.subscriptions.push({
           topic: topicName,
@@ -98,14 +109,17 @@ class trustClient {
           persist: persistant
         });
         this.client.subscribe(topicurl, (body) => {
+          console.log('subscribed - persistant');
           this.subscriptions[pushID - 1].handler(null, JSON.parse(body));
         });
       } else {
         this.client.subscribe(topicurl, (body) => {
+          console.log('subscribed');
           callback(null, JSON.parse(body));
         });
       }
     } else {
+      console.log('error trying to subscribe');
       callback({ Error: 'Unable to subscribe. Not connected to the TRUST server.' });
     }
   }
@@ -117,9 +131,12 @@ class trustClient {
    * @callback(err) - Callback returns one parameter to return potential errors
    */
   unsubscribe(topic, callback) {
+    console.log('unsubscribe called');
     this.client.unsubscribe(topic);
+    console.log(`unsubscribed from ${topic}`);
     for (let i = 0; i < this.subscriptions.length; i += 1) {
       if (this.subscriptions[i].topic === `/topic/${topic}`) {
+        console.log(`found ${topic} and is unsubscribed`);
         this.subscriptions.splice(i, 1);
         break;
       }
@@ -133,6 +150,7 @@ class trustClient {
    * @callback(err) - Callback returns one parameter to return potential errors
    */
   unsubscribeAll(callback) {
+    console.log('unsubscribeAll called');
     this.subscriptions.forEach((topic) => {
       this.client.unsubscribe(topic.topic);
     });
