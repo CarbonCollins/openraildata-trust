@@ -4,7 +4,7 @@ require('dotenv').config();
 
 const trust = new Trust(process.env.ORDT_USER, process.env.ORDT_PASS);
 
-trust.disconnect(10000);
+trust.disconnect(30000);
 
 trust.connect((err) => {
   console.log(`Connect error: ${JSON.stringify(err)}`);

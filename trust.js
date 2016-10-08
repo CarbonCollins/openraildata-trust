@@ -35,18 +35,13 @@ class trustClient {
    * error returns (Not implemented yet)
    */
   connect(callback) {
-    console.log('connect called');
     if (this.client === null) {
-      console.log('attempting to connect');
       stompit.connect(this.credentials, (err, client) => {
         if (err) {
-          console.log('failed to connect');
           callback(err);
           return;
         }
-        console.log('connected');
         this.client = client;
-        // reconnect to subscriptions here?
         callback(null);
       });
     } else {
@@ -72,17 +67,14 @@ class trustClient {
 
     setTimeout(() => {
       console.log('disconnect timeout complete');
-      this.unsubscribeAll(() => {
-        console.log('unsubscribe from all has run');
-        this.client.disconnect((err) => {
-          if (err) { console.log('error disconnecting'); }
-          console.log('disconnected');
-          this.subscriptions = [];
-        });
-        if (typeof callback === 'function') {
-          callback();
-        }
+      this.client.disconnect((err) => {
+        if (err) { console.log('error disconnecting'); }
+        console.log('disconnected');
+        this.subscriptions = [];
       });
+      if (typeof callback === 'function') {
+        callback();
+      }
     }, timeout);
   }
 
@@ -101,73 +93,26 @@ class trustClient {
       persistant.prop = true;
     }
     if (this.sessionID !== '') {
-      const topicurl = `/topic/${topicName}`;
-      console.log(`attempting to subscribe to ${topicurl}`);
-      if (persistant === true) {
-        const pushID = this.subscriptions.push({
-          topic: topicName,
-          handler: callback,
-          persist: persistant
+      const subHeaders = {
+        destination: `/topic/${topicName}`,
+        ack: 'auto'
+      };
+      console.log(`attempting to subscribe to ${subHeaders}`);
+      this.client.subscribe(subHeaders, (err, message) => {
+        console.log('subscribed');
+        message.readString('utf-8', (er, body) => {
+          console.log('message received');
+          if (er) {
+            console.log('message has error');
+          }
+          callback(er, JSON.parse(body));
         });
-        this.client.subscribe(topicurl, (body) => {
-          console.log('subscribed - persistant');
-          this.subscriptions[pushID - 1].handler(null, JSON.parse(body));
-        });
-      } else {
-        this.client.subscribe(topicurl, (body) => {
-          console.log('subscribed');
-          callback(null, JSON.parse(body));
-        });
-      }
+      });
     } else {
       console.log('error trying to subscribe');
       callback({ Error: 'Unable to subscribe. Not connected to the TRUST server.' });
     }
   }
-
-  /**
-   * Unsubscribe from a specified topic.
-   *
-   * @topic - The topic name which should be unsubscribed from.
-   * @callback(err) - Callback returns one parameter to return potential errors
-   */
-  unsubscribe(topic, callback) {
-    console.log('unsubscribe called');
-    this.client.unsubscribe(topic);
-    console.log(`unsubscribed from ${topic}`);
-    for (let i = 0; i < this.subscriptions.length; i += 1) {
-      if (this.subscriptions[i].topic === `/topic/${topic}`) {
-        console.log(`found ${topic} and is unsubscribed`);
-        this.subscriptions.splice(i, 1);
-        break;
-      }
-    }
-    callback(null);
-  }
-
-  /**
-   * Unsubscribe from all topics.
-   *
-   * @callback(err) - Callback returns one parameter to return potential errors
-   */
-  unsubscribeAll(callback) {
-    console.log('unsubscribeAll called');
-    this.subscriptions.forEach((topic) => {
-      console.log(`attempting to unsubscribe from: ${topic}`);
-      console.log(topic);
-      console.log(this.client);
-      this.client.unsubscribe(`/topic/${topic.topic}`);
-    });
-    this.subscriptions = [];
-    callback(null);
-  }
 }
 
 module.exports = trustClient;
-
-// Subscription reconnect:
-        /*for (let i = 0; this.subscriptions.length > i; i += 1) {
-          this.subscribe(this.subscriptions.topic, false, (err) => {
-            if (err) { console.log(err); }
-          });
-        }*/
