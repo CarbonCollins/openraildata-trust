@@ -10,21 +10,22 @@
 
 'use strict';
 
-const StompClient = require('stomp-client').StompClient;
+const stompit = require('stompit');
+
 
 class trustClient {
-  constructor(username, password, maxreconnect) {
-    const reconnect = (typeof maxreconnect === 'number') ? maxreconnect : -1;
-
-    this.client = (typeof username === 'string' && typeof password === 'string') ?
-      new StompClient('datafeeds.networkrail.co.uk', 61618,
-        username, password, '1.0', null, {
-          retries: reconnect,
-          delay: 1000
-        }) : null;
-
-    this.sessionID = '';
-    this.subscriptions = [];
+  constructor(username, password) {
+    this.credentials = {
+      host: 'datafeeds.networkrail.co.uk',
+      port: 61618,
+      connectHeaders: {
+        host: '/',
+        login: (username || ''),
+        passcode: (password || ''),
+        'heart-beat': '5000,5000'
+      }
+    };
+    this.client = null;
   }
 
   /**
@@ -33,20 +34,21 @@ class trustClient {
    * error returns (Not implemented yet)
    */
   connect(callback) {
-    if (this.client !== null) {
-      this.client.connect((sessionId) => {
-        this.sessionID = sessionId;
-        for (let i = 0; this.subscriptions.length > i; i += 1) {
-          this.subscribe(this.subscriptions.topic, false, (err) => {
-            if (err) { console.log(err); }
-          });
-        }
-        callback(null);
-      }, (err) => {
-        callback(err);
-      });
+    if (this.client === null) {
+      if (this.credentials.connectHeaders.login !== '' && this.credentials.connectHeaders.passcode !== '') {
+        stompit.connect(this.credentials, (err, client) => {
+          if (err) {
+            callback(err);
+            return;
+          }
+          this.client = client;
+          callback(null);
+        });
+      } else {
+        callback({ error: 'Invalid credentials' });
+      }
     } else {
-      callback({ Error: 'STOMP client was not initialised correctly' });
+      callback({ error: 'STOMP client was already initialised' });
     }
   }
 
@@ -59,87 +61,48 @@ class trustClient {
    * error returns (Not implemented yet)
    */
   disconnect(timeout, callback) {
-    if (typeof timeout === 'function') {
-      callback.prop = timeout;
-      timeout.prop = 0;
-    }
-
-    setTimeout(() => {
-      this.unsubscribeAll(() => {
-        this.client.disconnect(() => {
-          this.sessionID = '';
-          this.subscriptions = [];
+    const time = timeout || 0;
+    if (this.client !== null) {
+      setTimeout(() => {
+        this.client.disconnect((err) => {
+          if (err) {
+            this.client.destroy();
+          }
+          this.client = null;
+          if (typeof callback === 'function') {
+            callback(err);
+          } else if (typeof timeout === 'function') {
+            timeout(err);
+          }
         });
-        if (typeof callback === 'function') {
-          callback();
-        }
-      });
-    }, timeout);
+      }, ((typeof timeout === 'function') ? 0 : time));
+    } else if (typeof callback === 'function') {
+      callback(null);
+    } else if (typeof timeout === 'function') {
+      timeout(null);
+    }
   }
 
   /**
    * Subscribes to a topic as long as the class is connected to the TRUST server.
    *
    * @topic - The topic name to connect to (this is then prepended to /topic/).
-   * @persistant - For specifying if it should be resubscribed on a disconnect
-   * and then reconnect (Not implemented yet)
    * @callback(err, message) - Callback returns two parameters, an error and a message body.
    */
-  subscribe(topicName, persistant, callback) { // callback cannot auto unbundle message...
-    if (typeof persistant === 'function') {
-      callback.prop = persistant;
-      persistant.prop = true;
-    }
-
-    if (this.sessionID !== '') {
-      const topicurl = `/topic/${topicName}`;
-      if (persistant === true) {
-        const pushID = this.subscriptions.push({
-          topic: topicName,
-          handler: callback,
-          persist: persistant
+  subscribe(topicName, callback) { // callback cannot auto unbundle message...
+    if (this.client !== null) {
+      const subHeaders = {
+        destination: `/topic/${topicName}`,
+        ack: 'auto'
+      };
+      this.client.subscribe(subHeaders, (err, message) => {
+        message.readString('utf-8', (er, body) => {
+          callback(er, JSON.parse(body));
         });
-        this.client.subscribe(topicurl, (body) => {
-          this.subscriptions[pushID - 1].handler(null, JSON.parse(body));
-        });
-      } else {
-        this.client.subscribe(topicurl, (body) => {
-          callback(null, JSON.parse(body));
-        });
-      }
+      });
     } else {
-      callback({ Error: 'Unable to subscribe. Not connected to the TRUST server.' });
+      callback({ error: 'Unable to subscribe. Not connected to the TRUST server.' });
     }
-  }
-
-  /**
-   * Unsubscribe from a specified topic.
-   *
-   * @topic - The topic name which should be unsubscribed from.
-   * @callback(err) - Callback returns one parameter to return potential errors
-   */
-  unsubscribe(topic, callback) {
-    this.client.unsubscribe(topic);
-    for (let i = 0; i < this.subscriptions.length; i += 1) {
-      if (this.subscriptions[i].topic === `/topic/${topic}`) {
-        this.subscriptions.splice(i, 1);
-        break;
-      }
-    }
-    callback(null);
-  }
-
-  /**
-   * Unsubscribe from all topics.
-   *
-   * @callback(err) - Callback returns one parameter to return potential errors
-   */
-  unsubscribeAll(callback) {
-    this.subscriptions.forEach((topic) => {
-      this.client.unsubscribe(topic.topic);
-    });
-    this.subscriptions = [];
-    callback(null);
   }
 }
 
