@@ -47,6 +47,7 @@ class trustClient {
         console.log('connected');
         this.client = client;
         // reconnect to subscriptions here?
+        callback(null);
       });
     } else {
       console.log('Client already initialised');
