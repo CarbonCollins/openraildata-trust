@@ -16,19 +16,36 @@ A Node.JS package which connects to Network Rail's TRUST system to provide infor
 
 	npm install openraildata-trust
 
+## Example usage
+
+An example of a subscription to all UK train movement and printing the results to the console.
+
+```
+'use strict';
+
+const Trust = require('openraildata-trust');
+const trust = new Trust('username', 'password');
+
+trust.connect((err) => {
+    trust.subscribe('TRAIN_MVT_ALL_TOC', (er, msg) => {
+      if (!er) {
+        console.log(msg);
+      }
+    });
+  }
+});
+```
+
 # API
 
 ## Trust = require('openraildata-trust')
 
 Require returns a constructor for STOMP client instances.
 
-## Trust(username, password, [reconnect])
+## Trust(username, password)
 
 - `username`: Your Network Rail Datafeeds email
 - `password`: Your Network Rail Datafeeds password
-- `reconnect`: An optional integer value which specifies the maximum number of reconnection attempts (default is no limit)
-
-Reconnection timings are calculated using exponential backoff. The first reconnection happens immediately, the second reconnection happens at 1s, the third at 2s, the fourth at 4s, etc.
 
 ## trust.connect(callback)
 
