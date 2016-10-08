@@ -4,7 +4,7 @@ openraildata-trust
 [![Travis](https://img.shields.io/travis/divergentlepton/openraildata-trust.svg?style=flat-square)](https://travis-ci.org/divergentlepton/openraildata-trust)
 [![Version](https://img.shields.io/npm/v/openraildata-trust.svg?style=flat-square)](https://www.npmjs.com/package/openraildata-trust)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/divergentlepton/openraildata-trust/master/LICENSE)
-[![sheilds](https://img.shields.io/badge/status-WIP-yellow.svg?style=flat-square)](https://img.shields.io/badge/status-WIP-yellow.svg)
+[![sheilds](https://img.shields.io/badge/status-Beta-orange.svg?style=flat-square)](https://img.shields.io/badge/status-WIP-yellow.svg)
 
 
 A Node.JS package which connects to Network Rail's TRUST system to provide information on the UK rail network.
