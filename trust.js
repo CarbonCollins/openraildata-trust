@@ -88,7 +88,7 @@ class trustClient {
       callback.prop = persistant;
       persistant.prop = true;
     }
-
+    console.log(this.sessionID);
     if (this.sessionID !== '') {
       const topicurl = `/topic/${topicName}`;
       if (persistant === true) {
