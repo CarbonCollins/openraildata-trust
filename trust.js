@@ -35,16 +35,20 @@ class trustClient {
    */
   connect(callback) {
     if (this.client === null) {
-      stompit.connect(this.credentials, (err, client) => {
-        if (err) {
-          callback(err);
-          return;
-        }
-        this.client = client;
-        callback(null);
-      });
+      if (this.credentials.connectHeaders.login !== '' && this.credentials.connectHeaders.passcode !== '') {
+        stompit.connect(this.credentials, (err, client) => {
+          if (err) {
+            callback(err);
+            return;
+          }
+          this.client = client;
+          callback(null);
+        });
+      } else {
+        callback({ error: 'Invalid credentials' });
+      }
     } else {
-      callback({ Error: 'STOMP client was already initialised' });
+      callback({ error: 'STOMP client was already initialised' });
     }
   }
 
@@ -94,7 +98,7 @@ class trustClient {
         });
       });
     } else {
-      callback({ Error: 'Unable to subscribe. Not connected to the TRUST server.' });
+      callback({ error: 'Unable to subscribe. Not connected to the TRUST server.' });
     }
   }
 }
