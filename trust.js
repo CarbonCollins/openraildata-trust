@@ -65,29 +65,29 @@ class trustClient {
       callback.prop = timeout;
       timeout.prop = 0;
     }
-
-    setTimeout(() => {
-      this.client.disconnect();
-      if (typeof callback === 'function') {
-        callback();
-      }
-    }, timeout);
+    if (this.client !== null) {
+      setTimeout(() => {
+        this.client.disconnect((err) => {
+          if (err) {
+            this.client.destroy();
+          }
+          this.client = null;
+          if (typeof callback === 'function') {
+            callback(err);
+          }
+        });
+      }, timeout);
+    }
   }
 
   /**
    * Subscribes to a topic as long as the class is connected to the TRUST server.
    *
    * @topic - The topic name to connect to (this is then prepended to /topic/).
-   * @persistant - For specifying if it should be resubscribed on a disconnect
-   * and then reconnect (Not implemented yet)
    * @callback(err, message) - Callback returns two parameters, an error and a message body.
    */
-  subscribe(topicName, persistant, callback) { // callback cannot auto unbundle message...
-    if (typeof persistant === 'function') {
-      callback.prop = persistant;
-      persistant.prop = true;
-    }
-    if (this.sessionID !== '') {
+  subscribe(topicName, callback) { // callback cannot auto unbundle message...
+    if (this.client !== null) {
       const subHeaders = {
         destination: `/topic/${topicName}`,
         ack: 'auto'

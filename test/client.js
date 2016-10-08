@@ -58,8 +58,8 @@ describe('openraildata-trust tests', () => {
         done();
       });
     }).timeout(30000);
-    it('Should connect to a valid instance of trust (valid client)', (done) => {
-      const nvtrust = new Trust(process.env.ORDT_USER, process.env.ORDT_PASS, false);
+    it('Expected to connect to a valid instance of trust (valid client)', (done) => {
+      const nvtrust = new Trust(process.env.ORDT_USER, process.env.ORDT_PASS);
       nvtrust.connect((err) => {
         expect(err).to.be.equal(null, `An error from the connect funtion was returned: ${err}`);
         expect(nvtrust.credentials.host).to.be.equal('datafeeds.networkrail.co.uk', 'instance host is incorrect');
@@ -75,5 +75,15 @@ describe('openraildata-trust tests', () => {
     }).timeout(30000);
   });
 
-  
+  describe('Testing trust.subscribe() functionality', () => {
+    it('Expects an error when trying to subscribe with an invalid client', (done) => {
+      const trust = new Trust();
+      trust.subscribe('TRAIN_MVT_ALL_TOC', (er) => {
+        expect(er).to.be.an('object', 'Returned error should be an Object');
+        expect(er.error).to.be.an('string', 'Returned error text should be a String');
+        expect(er.error).to.be.equal('Unable to subscribe. Not connected to the TRUST server.', 'Returned error should be: "STOMP client was not initialised correctly"');
+        done();
+      });
+    }).timeout(30000);
+  });
 });
