@@ -86,4 +86,43 @@ describe('openraildata-trust tests', () => {
       });
     }).timeout(30000);
   });
+
+  describe('Testing trust.disconnect() functionality', () => {
+    it('Expects a null client when client is already null (no error)', (done) => {
+      const trust = new Trust();
+      expect(trust.client).to.be.equal(null, 'client should be null before disconnect');
+      trust.disconnect((err) => {
+        expect(err).to.be.equal(null, 'no error should be returned after disconnect');
+        expect(trust.client).to.be.equal(null, 'client should be null after disconnect');
+        done();
+      });
+    }).timeout(10000);
+    it('Expects a null client when client is not already null (no error)', (done) => {
+      const trust = new Trust(process.env.ORDT_USER, process.env.ORDT_PASS);
+      trust.connect(() => {
+        expect(trust.client).to.not.equal(null, 'client should not be null before disconnect');
+        trust.disconnect((err) => {
+          expect(err).to.be.equal(null, 'no error should be returned after disconnect');
+          expect(trust.client).to.be.equal(null, 'client should be null after disconnect');
+          done();
+        });
+      });
+    }).timeout(10000);
+    it('Expects a null client when client is not already null with 3 second delay(no error)', (done) => {
+      const trust = new Trust(process.env.ORDT_USER, process.env.ORDT_PASS);
+      trust.connect(() => {
+        expect(trust.client).to.not.equal(null, 'client should not be null before disconnect');
+        const timeBefore = Date.now();
+        trust.disconnect(3000, (err) => {
+          const timeAfter = Date.now();
+          const timeDiff = timeAfter - timeBefore;
+          expect(err).to.be.equal(null, 'no error should be returned after disconnect');
+          expect(trust.client).to.be.equal(null, 'client should be null after disconnect');
+          expect((timeDiff >= 3000)).to.be.equal(true, 'Time difference expected to be over 3000ms');
+          expect((timeDiff <= 9500)).to.be.equal(true, 'Time difference expected to be under 9500ms');
+          done();
+        });
+      });
+    }).timeout(10000);
+  });
 });

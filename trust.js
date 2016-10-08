@@ -61,10 +61,7 @@ class trustClient {
    * error returns (Not implemented yet)
    */
   disconnect(timeout, callback) {
-    if (typeof timeout === 'function') {
-      callback.prop = timeout;
-      timeout.prop = 0;
-    }
+    const time = timeout || 0;
     if (this.client !== null) {
       setTimeout(() => {
         this.client.disconnect((err) => {
@@ -74,9 +71,15 @@ class trustClient {
           this.client = null;
           if (typeof callback === 'function') {
             callback(err);
+          } else if (typeof timeout === 'function') {
+            timeout(err);
           }
         });
-      }, timeout);
+      }, ((typeof timeout === 'function') ? 0 : time));
+    } else if (typeof callback === 'function') {
+      callback(null);
+    } else if (typeof timeout === 'function') {
+      timeout(null);
     }
   }
 
