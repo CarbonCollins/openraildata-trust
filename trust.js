@@ -26,7 +26,6 @@ class trustClient {
       }
     };
     this.client = null;
-    this.subscriptions = [];
   }
 
   /**
@@ -45,7 +44,6 @@ class trustClient {
         callback(null);
       });
     } else {
-      console.log('Client already initialised');
       callback({ Error: 'STOMP client was already initialised' });
     }
   }
@@ -59,19 +57,13 @@ class trustClient {
    * error returns (Not implemented yet)
    */
   disconnect(timeout, callback) {
-    console.log('disconnect called');
     if (typeof timeout === 'function') {
       callback.prop = timeout;
       timeout.prop = 0;
     }
 
     setTimeout(() => {
-      console.log('disconnect timeout complete');
-      this.client.disconnect((err) => {
-        if (err) { console.log('error disconnecting'); }
-        console.log('disconnected');
-        this.subscriptions = [];
-      });
+      this.client.disconnect();
       if (typeof callback === 'function') {
         callback();
       }
@@ -87,7 +79,6 @@ class trustClient {
    * @callback(err, message) - Callback returns two parameters, an error and a message body.
    */
   subscribe(topicName, persistant, callback) { // callback cannot auto unbundle message...
-    console.log('subscribe called');
     if (typeof persistant === 'function') {
       callback.prop = persistant;
       persistant.prop = true;
@@ -97,19 +88,12 @@ class trustClient {
         destination: `/topic/${topicName}`,
         ack: 'auto'
       };
-      console.log(`attempting to subscribe to ${subHeaders}`);
       this.client.subscribe(subHeaders, (err, message) => {
-        console.log('subscribed');
         message.readString('utf-8', (er, body) => {
-          console.log('message received');
-          if (er) {
-            console.log('message has error');
-          }
           callback(er, JSON.parse(body));
         });
       });
     } else {
-      console.log('error trying to subscribe');
       callback({ Error: 'Unable to subscribe. Not connected to the TRUST server.' });
     }
   }
