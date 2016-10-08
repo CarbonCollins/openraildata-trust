@@ -20,8 +20,8 @@ class trustClient {
       port: 61618,
       connectHeaders: {
         host: '/',
-        login: username,
-        passcode: password,
+        login: (username || ''),
+        passcode: (password || ''),
         'heart-beat': '5000,5000'
       }
     };

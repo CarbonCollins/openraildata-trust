@@ -7,20 +7,21 @@ require('dotenv').config();
 
 describe('openraildata-trust tests', function() {
   describe('Create a new instance of trust client', function() {
-    it('Expect a valid trust instance without reconnect', function() {
-      const testTrust = new Trust('testuser', 'testpass', false);
-      expect(testTrust).to.be.an('Object', 'Resultant should be an object');
-      expect(testTrust.client).to.be.an('Object', 'resultant key "client" should be an object');
-    });
-    it('Expect a valid trust instance with reconnect', function() {
+    it('Expect a valid trust instance', function() {
       const testTrust = new Trust('testuser', 'testpass');
-      expect(testTrust).to.be.an('Object', 'Resultant should be an object');
-      expect(testTrust.client).to.be.an('Object', 'resultant key "client" should be an object');
+      expect(testTrust).to.be.an('object', 'Resultant should be an object');
+      expect(testTrust.credentials.host).to.be.equal('datafeeds.networkrail.co.uk', 'instance host is incorrect');
+      expect(testTrust.credentials.port).to.be.equal(61618, 'instance port is incorrect');
+      expect(testTrust.credentials.connectHeaders.login).to.be.equal('testuser', 'instance has the incorrect username');
+      expect(testTrust.credentials.connectHeaders.passcode).to.be.equal('testpass', 'instance has the incorrect username');
     });
     it('Expect an invalid trust instance', function() {
       const testTrust = new Trust();
       expect(testTrust).to.be.an('Object', 'Resultant should be an object');
-      expect(testTrust.client).to.be.equal(null, 'resultant key "client" should be null');
+      expect(testTrust.credentials.host).to.be.equal('datafeeds.networkrail.co.uk', 'instance host is incorrect');
+      expect(testTrust.credentials.port).to.be.equal(61618, 'instance port is incorrect');
+      expect(testTrust.credentials.connectHeaders.login).to.be.equal('', 'instance has not got an empty username');
+      expect(testTrust.credentials.connectHeaders.passcode).to.be.equal('', 'instance has not got an empty password');
     });
   });
 
