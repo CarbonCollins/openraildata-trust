@@ -19,7 +19,7 @@
     "git": "https://github.com/divergentlepton"
   },
   "dependencies": {
-    "stompit": "^0.23.0"
+    "stompit": "^1.0.0"
   },
   "repository": {
     "type": "git",
